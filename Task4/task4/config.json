@@ -1,0 +1,7 @@
+{
+  "server_url": "http://127.0.0.1:8000",
+  "checkout_id": 1,
+  "alert_threshold": 10,
+  "simulated_people": 7,
+  "interval_seconds": 10
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Моніторинг касових черг</title>
+    <style>
+        body { font-family: Arial; text-align: center; background: #f0f0f0; }
+        h1 { color: #333; }
+        .queue { font-size: 24px; margin: 20px; padding: 20px; border: 2px solid #333; border-radius: 10px; }
+        .normal { background: lightgreen; }
+        .warning { background: orange; }
+        .danger { background: salmon; }
+    </style>
+</head>
+<body>
+    <h1>Моніторинг касових черг</h1>
+    <div id="queues"></div>
+
+    <script>
+        function updateQueues() {
+            fetch('http://127.0.0.1:8000/queues')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    data.forEach(q => {
+                        let statusClass = q.people_count <= 5 ? 'normal' : q.people_count <= 10 ? 'warning' : 'danger';
+                        let statusText = q.people_count <= 5 ? 'Норма' : q.people_count <= 10 ? 'Увага' : 'Переповнена!';
+                        html += `<div class="queue ${statusClass}">
+                            Каса ${q.checkout_id} — ${q.people_count} людей (${statusText})
+                        </div>`;
+                    });
+                    document.getElementById('queues').innerHTML = html || '<p>Немає даних</p>';
+                });
+        }
+
+        updateQueues();
+        setInterval(updateQueues, 5000);  // оновлення кожні 5 секунд
+    </script>
+</body>
+</html>
